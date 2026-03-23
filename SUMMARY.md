@@ -83,6 +83,7 @@
 - [Unsafe Rust](unsafe_rust.md)
 - [Type Conversions](type_conversions.md)
 - [Special Symbols](special_symbols.md)
+- [Queue Operations](queue_operations.md)
 
 ---
 
