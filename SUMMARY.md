@@ -111,7 +111,7 @@
 
 # Rujukan & Gaya
 
-
+- [Data Race Detection](data_race_detection.md)
 - [Chaining & Idiomatic](chaining_idiomatic.md)
 - [Cheat Sheet](cheat-sheet.md)
 - [Debugging Guide](debugging_guide.md)
