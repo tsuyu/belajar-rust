@@ -1,0 +1,10 @@
+[book]
+title = "Belajar Rust"
+description = "Panduan pembelajaran Rust dari perspektif programmer (terutamanya yang datang dari PHP atau bahasa lain)."
+authors = ["tsuyu"]
+language = "ms"
+src = "."
+
+[output.html]
+git-repository-url = "https://github.com/tsuyu/belajar-rust"
+edit-url-template = "https://github.com/tsuyu/belajar-rust/edit/main/{path}"
