@@ -102,6 +102,7 @@
 
 # Web Framework
 
+- [Actix Web Guide](actix_web_guide.md)
 - [Axum Guide](axum_guide.md)
 - [Askama Templating](askama_guide.md)
 - [Redis Integration](redis_integration.md)
