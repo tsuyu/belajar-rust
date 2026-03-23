@@ -79,6 +79,7 @@
 # Topik Lanjutan
 
 - [Macros Declarative](macros_declarative.md)
+- [Unit Testing](unit_testing.md)
 - [Unsafe Rust](unsafe_rust.md)
 - [Type Conversions](type_conversions.md)
 - [Special Symbols](special_symbols.md)
