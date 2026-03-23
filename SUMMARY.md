@@ -110,9 +110,11 @@
 
 # Rujukan & Gaya
 
-- [Cheat Sheet](cheat-sheet.md)
-- [Idiomatic Rust](idiomatic_rust.md)
+
 - [Chaining & Idiomatic](chaining_idiomatic.md)
-- [Syntax Tradeoffs](syntax_tradeoffs.md)
+- [Cheat Sheet](cheat-sheet.md)
 - [Debugging Guide](debugging_guide.md)
-- [PS](ps.md)
+- [Design Patterns](design_patterns.md)
+- [Idiomatic Rust](idiomatic_rust.md)
+- [Syntax Tradeoffs](syntax_tradeoffs.md)
+- [Prepare Statement](ps.md)
