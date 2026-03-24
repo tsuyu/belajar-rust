@@ -1,6 +1,6 @@
 # Prepared Statements: MySQLi (PHP) → SQLx (Rust)
 
-## Setup
+## Persediaan
 
 ### PHP
 ```php
@@ -32,7 +32,7 @@ CREATE TABLE users (
 
 ---
 
-## SELECT — Single Row
+## SELECT — Satu Baris
 
 ### PHP
 ```php
@@ -73,7 +73,7 @@ println!("{}", user.email);
 
 ---
 
-## SELECT — Multiple Rows
+## SELECT — Pelbagai Baris
 
 ### PHP
 ```php
@@ -116,7 +116,7 @@ while let Some(user) = rows.try_next().await? {
 
 ---
 
-## SELECT — Count Rows
+## SELECT — Kira Bilangan Baris
 
 ### PHP
 ```php
@@ -137,7 +137,7 @@ println!("{}", count);
 
 ---
 
-## SELECT — get_result() style (fetch_assoc)
+## SELECT — Gaya get_result() (fetch_assoc)
 
 ### PHP
 ```php
@@ -171,7 +171,7 @@ for user in &users {
 
 ---
 
-## SELECT — LIKE Wildcard
+## SELECT — Wildcard LIKE
 
 ### PHP
 ```php
@@ -196,7 +196,7 @@ let users = sqlx::query_as::<_, User>(
 
 ---
 
-## SELECT — IN (Array of IDs)
+## SELECT — IN (Senarai ID)
 
 ### PHP
 ```php
@@ -238,7 +238,7 @@ let users = query.fetch_all(&pool).await?;
 
 ---
 
-## SELECT — LIMIT & OFFSET
+## SELECT — Had & Ofset
 
 ### PHP
 ```php
@@ -264,7 +264,7 @@ let users = sqlx::query_as::<_, User>(
 
 ---
 
-## SELECT — BETWEEN
+## SELECT — Antara Nilai (BETWEEN)
 
 ### PHP
 ```php
@@ -290,7 +290,7 @@ let users = sqlx::query_as::<_, User>(
 
 ---
 
-## INSERT — Single Row
+## INSERT — Satu Baris
 
 ### PHP
 ```php
@@ -315,7 +315,7 @@ sqlx::query("INSERT INTO users (name, email) VALUES (?, ?)")
 
 ---
 
-## INSERT — Dapat last_insert_id
+## INSERT — Dapatkan last_insert_id
 
 ### PHP
 ```php
@@ -337,7 +337,7 @@ println!("Your account id is {}", insert_id);
 
 ---
 
-## INSERT — Bulk / Multiple Rows
+## INSERT — Pukal / Pelbagai Baris
 
 ### PHP
 ```php
@@ -417,7 +417,7 @@ sqlx::query("UPDATE users SET email = ? WHERE id = ? LIMIT 1")
 
 ---
 
-## UPDATE — Affected Rows
+## UPDATE — Baris Terjejas
 
 ### PHP
 ```php
@@ -463,7 +463,7 @@ println!("{}", result.rows_affected());
 
 ---
 
-## Error Handling
+## Pengendalian Ralat
 
 ### PHP
 ```php
@@ -515,7 +515,7 @@ pub type Result<T> = std::result::Result<T, AppError>;
 
 ---
 
-## Rujukan Pantas: PHP MySQLi → Rust sqlx
+## Rujukan Pantas — PHP MySQLi → Rust sqlx
 
 | PHP MySQLi | Rust sqlx |
 |---|---|
@@ -534,7 +534,63 @@ pub type Result<T> = std::result::Result<T, AppError>;
 
 ---
 
-## Cargo.toml Minimum
+## Pemetaan Jenis MySQL ke Rust
+
+| Jenis MySQL | Jenis Rust | Nota |
+|---|---|---|
+| `TINYINT` | `i8` | |
+| `TINYINT UNSIGNED` | `u8` | |
+| `SMALLINT` | `i16` | |
+| `SMALLINT UNSIGNED` | `u16` | |
+| `INT` / `MEDIUMINT` | `i32` | |
+| `INT UNSIGNED` | `u32` | |
+| `BIGINT` | `i64` | |
+| `BIGINT UNSIGNED` | `u64` | |
+| `TINYINT(1)` / `BOOLEAN` | `bool` | MySQL simpan sebagai 0/1 |
+| `FLOAT` | `f32` | |
+| `DOUBLE` | `f64` | |
+| `DECIMAL` / `NUMERIC` | `rust_decimal::Decimal` | Perlukan crate `rust_decimal` |
+| `VARCHAR` / `TEXT` / `CHAR` | `String` | |
+| `BLOB` / `BINARY` / `VARBINARY` | `Vec<u8>` | |
+| `DATE` | `chrono::NaiveDate` | Perlukan feature `chrono` |
+| `TIME` | `chrono::NaiveTime` | Perlukan feature `chrono` |
+| `DATETIME` | `chrono::NaiveDateTime` | Perlukan feature `chrono` |
+| `TIMESTAMP` | `chrono::DateTime<Utc>` | Perlukan feature `chrono` |
+| `JSON` | `serde_json::Value` | Perlukan feature `json` |
+| `NULL` / nullable column | `Option<T>` | Contoh: `Option<String>` |
+
+### Contoh Struct dengan Pelbagai Jenis
+
+```rust
+use chrono::NaiveDateTime;
+
+#[derive(sqlx::FromRow, Debug)]
+struct Product {
+    id:         i32,
+    name:       String,
+    price:      f64,
+    stock:      Option<i32>,        // nullable INT
+    is_active:  bool,               // TINYINT(1)
+    created_at: NaiveDateTime,      // DATETIME
+}
+```
+
+### Cargo.toml dengan Chrono & JSON
+
+```toml
+sqlx = { version = "0.7", features = [
+    "runtime-tokio-rustls",
+    "mysql",
+    "macros",
+    "chrono",        # untuk Date/Time
+    "json",          # untuk JSON
+] }
+chrono = { version = "0.4", features = ["serde"] }
+```
+
+---
+
+## Cargo.toml Minimum (Asas)
 
 ```toml
 [dependencies]
