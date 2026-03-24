@@ -1521,6 +1521,179 @@ cargo doc --open        # phpdoc
 
 ---
 
+## 24. Turbofish `::<>` (Rust Unik)
+
+> Tiada equivalent dalam PHP. Turbofish adalah cara untuk **nyatakan jenis generik secara explicit** pada panggilan fungsi atau method — bila Rust tidak boleh infer sendiri.
+
+### Kenapa dipanggil "turbofish"?
+
+Sintaksnya `::<>` menyerupai ikan yang melompat — dan komuniti Rust menamaknya *turbofish* secara jenaka.
+
+```
+::<T>   ← turbofish
+ ^^
+ ||__ muncung ikan
+ |___ badan + sirip
+```
+
+---
+
+### Sintaks Asas
+
+```rust
+fungsi::<Jenis>(args)
+value.method::<Jenis>()
+```
+
+---
+
+### Bila perlu Turbofish?
+
+Turbofish diperlukan bila Rust **tidak dapat infer jenis** daripada konteks. Ini berlaku dalam 3 situasi utama:
+
+#### 1. `parse()` — tukar String kepada jenis lain
+
+Tanpa turbofish, Rust tidak tahu nak parse kepada jenis apa:
+
+```rust
+// ❌ ERROR — Rust tidak tahu jenis apa
+let n = "42".parse().unwrap();
+
+// ✅ Cara 1: turbofish
+let n = "42".parse::<i32>().unwrap();
+
+// ✅ Cara 2: type annotation (sama kuat, berbeza gaya)
+let n: i32 = "42".parse().unwrap();
+```
+
+#### 2. `collect()` — kumpul iterator ke dalam collection
+
+```rust
+let words = vec!["hello", "world"];
+
+// ❌ ERROR — collect kepada apa?
+let upper = words.iter().map(|w| w.to_uppercase()).collect();
+
+// ✅ Turbofish — nyata jenis collection
+let upper = words.iter().map(|w| w.to_uppercase()).collect::<Vec<String>>();
+
+// ✅ Atau type annotation
+let upper: Vec<String> = words.iter().map(|w| w.to_uppercase()).collect();
+```
+
+#### 3. Fungsi generik — pilih implementasi spesifik
+
+```rust
+fn buat_default<T: Default>() -> T {
+    T::default()
+}
+
+// ❌ ERROR — T apa?
+let x = buat_default();
+
+// ✅ Turbofish — specify T
+let x = buat_default::<i32>();   // → 0
+let y = buat_default::<String>(); // → ""
+let z = buat_default::<Vec<u8>>(); // → []
+```
+
+---
+
+### Contoh Lanjut
+
+#### `String::from` vs turbofish pada method chaining
+
+```rust
+// Turbofish berguna dalam method chain panjang
+let result = ["1", "2", "3", "4", "5"]
+    .iter()
+    .map(|s| s.parse::<i32>().unwrap())
+    .filter(|n| n % 2 == 0)
+    .collect::<Vec<i32>>();
+
+println!("{:?}", result);  // [2, 4]
+```
+
+#### HashMap collect
+
+```rust
+use std::collections::HashMap;
+
+let pairs = vec![("a", 1), ("b", 2), ("c", 3)];
+
+// Turbofish untuk HashMap
+let map = pairs.into_iter().collect::<HashMap<&str, i32>>();
+
+// Atau underscore — Rust infer dari annotation
+let map: HashMap<_, _> = pairs.into_iter().collect();
+```
+
+#### Fungsi dalam standard library
+
+```rust
+// Vec::with_capacity — pilih jenis elemen
+let v = Vec::<i32>::with_capacity(10);
+
+// std::mem::size_of
+let size = std::mem::size_of::<u64>();  // → 8 bytes
+println!("u64 = {} bytes", size);
+
+// Into/From dengan turbofish
+let s = String::from("hello");
+let bytes = Vec::<u8>::from(s.clone());
+```
+
+---
+
+### Turbofish vs Type Annotation — Bila Guna Mana?
+
+| Situasi | Pilihan | Contoh |
+|---|---|---|
+| Single assignment, jelas | Type annotation | `let x: i32 = "5".parse().unwrap()` |
+| Method chain panjang | Turbofish | `.collect::<Vec<_>>()` |
+| Tiada variable (terus pass) | Turbofish | `foo("5".parse::<i32>().unwrap())` |
+| Generic function tanpa return assign | Turbofish | `size_of::<f64>()` |
+
+```rust
+// Tiada variable — MESTI turbofish
+println!("{}", "42".parse::<i32>().unwrap() * 2);
+
+// Ada variable — annotation lebih readable
+let n: i32 = "42".parse().unwrap();
+println!("{}", n * 2);
+```
+
+---
+
+### Wildcards dalam Turbofish
+
+Gunakan `_` bila sebahagian jenis boleh di-infer:
+
+```rust
+// Fully explicit
+let v = vec![1, 2, 3].into_iter().collect::<Vec<i32>>();
+
+// Partial — Rust infer inner type
+let v = vec![1, 2, 3].into_iter().collect::<Vec<_>>();
+
+// HashMap — infer kedua-dua K dan V
+let map = pairs.into_iter().collect::<HashMap<_, _>>();
+```
+
+---
+
+### Ringkasan
+
+| Perkara | Keterangan |
+|---|---|
+| Sintaks | `fungsi::<T>()` atau `method::<T>()` |
+| Tujuan | Nyatakan jenis generik bila Rust tidak dapat infer |
+| Alternatif | Type annotation `let x: T = ...` |
+| Bila MESTI turbofish | Tiada variable untuk letak annotation |
+| Simbol `_` | Biar Rust infer sebahagian jenis |
+
+---
+
 ## Rujukan Pantas: PHP → Rust
 
 | Konsep PHP | Rust |
