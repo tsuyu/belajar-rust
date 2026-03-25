@@ -119,3 +119,4 @@
 - [Idiomatic Rust](idiomatic_rust.md)
 - [Syntax Tradeoffs](syntax_tradeoffs.md)
 - [Prepare Statement](ps.md)
+- [Rust Quick Reference](rust_quick_reference.md)
