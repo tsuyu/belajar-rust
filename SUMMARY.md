@@ -121,3 +121,4 @@
 - [Prepare Statement](ps.md)
 - [Rust Quick Reference](rust_quick_reference.md)
 - [Rust Ownership Tree](rust_ownership_tree.md)
+- [Currency Handling Rust](currency_handling_rust.md)
